@@ -143,24 +143,22 @@ void mundur(int speed) {
 
 void geserKiri(int speed) {
   int s = constrain(speed, 0, maxPower);
-  // Gerak kepiting ke Kiri tanpa rotasi
-  moveMotors(-s/2, s/2, s);
+  moveMotors(s/2, -s/2, -s);
 }
 
 void geserKanan(int speed) {
   int s = constrain(speed, 0, maxPower);
-  // Gerak kepiting ke Kanan tanpa rotasi
-  moveMotors(s/2, -s/2, -s);
+  moveMotors(-s/2, s/2, s);
 }
 
 void rotasiKiri(int speed) {
   int s = constrain(speed, 0, maxPower);
-  moveMotors(-s, s, -s);
+  moveMotors(s, -s, s);
 }
 
 void rotasiKanan(int speed) {
   int s = constrain(speed, 0, maxPower);
-  moveMotors(s, -s, s);
+  moveMotors(-s, s, -s);
 }
 
 void stopRobot() {
