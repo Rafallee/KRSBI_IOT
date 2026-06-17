@@ -63,7 +63,7 @@ Proyek ini dirancang khusus untuk memenuhi tugas pada mata kuliah **Pemrograman 
    const char* password = "PASSWORD_WIFI_ANDA";
    ```
 5. *Compile* dan lakukan *Upload* program ke dalam papan sirkuit **ESP32 Dev Module**.
-6. Gunakan aplikasi/pengontrol eksternal yang mendukung MQTT, hubungkan ke server `broker.hivemq.com:1883`, lalu kirim JSON perintah ke *topic*: **`robot/cmd`**.
+6. Gunakan aplikasi/pengontrol eksternal yang mendukung MQTT, hubungkan ke server `broker.hivemq.com:1883`, lalu kirim JSON perintah ke *topic*: **`rafly/krsbi_iot/cmd`**.
 
 ---
 <div align="center">

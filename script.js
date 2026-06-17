@@ -100,7 +100,7 @@ function publishCommand(action, speed = 150) {
     speed: Number(speed),
   };
 
-  client.publish("robot/cmd", JSON.stringify(payload));
+  client.publish("rafly/krsbi_iot/cmd", JSON.stringify(payload));
 
   addLog(`CMD | ACTION:${action} SPEED:${speed}`);
 }

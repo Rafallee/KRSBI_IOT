@@ -204,8 +204,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
     data += (char)payload[i];
   }
   
-  if(String(topic) == "robot/cmd") {
-    StaticJsonDocument<128> doc;
+  if(String(topic) == "rafly/krsbi_iot/cmd") {
+    StaticJsonDocument<256> doc; // Memperbesar kapasitas memory parsing JSON jaga-jaga
     DeserializationError err = deserializeJson(doc, data);
     
     if(!err) {
@@ -253,7 +253,7 @@ void reconnect() {
     Serial.println("MQTT Connecting...");
     if(client.connect("ESP32_KIWI")) {
       Serial.println("MQTT Connected");
-      client.subscribe("robot/cmd");
+      client.subscribe("rafly/krsbi_iot/cmd");
     } else {
       delay(2000);
     }
