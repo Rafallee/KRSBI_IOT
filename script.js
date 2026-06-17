@@ -174,16 +174,16 @@ dpadButtons.forEach((btn) => {
         mundur(speed);
         break;
       case "kiri":
-        geserKiri(speed);
-        break;
-      case "kanan":
-        geserKanan(speed);
-        break;
-      case "rotasi-kiri":
         rotasiKiri(speed);
         break;
-      case "rotasi-kanan":
+      case "kanan":
         rotasiKanan(speed);
+        break;
+      case "rotasi-kiri":
+        geserKiri(speed);
+        break;
+      case "rotasi-kanan":
+        geserKanan(speed);
         break;
       case "stop":
         stopRobot();
@@ -244,11 +244,17 @@ document.addEventListener("keydown", (e) => {
     mundur(200);
     addLog("KEYBOARD: S (MUNDUR)");
   } else if (key === "a") {
-    geserKiri(150);
-    addLog("KEYBOARD: A (GESER KIRI)");
+    rotasiKiri(150);
+    addLog("KEYBOARD: A (HADAP KIRI)");
   } else if (key === "d") {
+    rotasiKanan(150);
+    addLog("KEYBOARD: D (HADAP KANAN)");
+  } else if (key === "q") {
+    geserKiri(150);
+    addLog("KEYBOARD: Q (GESER KIRI)");
+  } else if (key === "e") {
     geserKanan(150);
-    addLog("KEYBOARD: D (GESER KANAN)");
+    addLog("KEYBOARD: E (GESER KANAN)");
   } else if (key === " ") {
     publishKick();
     addLog("KEYBOARD: SPACE (KICK)");
@@ -260,7 +266,7 @@ document.addEventListener("keyup", (e) => {
   keysPressed[key] = false;
 
   // Stop robot ketika semua key release
-  if (key === "w" || key === "s" || key === "a" || key === "d") {
+  if (key === "w" || key === "s" || key === "a" || key === "d" || key === "q" || key === "e") {
     stopRobot();
     addLog("KEYBOARD: RELEASE (STOP)");
   }

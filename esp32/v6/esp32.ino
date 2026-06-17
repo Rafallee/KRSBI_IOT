@@ -33,11 +33,17 @@ PubSubClient client(espClient);
 #define IN6 15
 
 // =========================
-// MOTOR CALIBRATION
+// MOTOR CALIBRATION V6 (Advanced Mapping)
 // =========================
-const float MOTOR_COMP_KIRI = 0.60;  // Dicekik 40% karena power kanan sudah mentok batas fisik
-const float MOTOR_COMP_KANAN = 1.00;
-const float MOTOR_COMP_BELAKANG = 1.00;
+// 1. MIN_POWER (Deadband) : Berapa PWM minimum agar motor KUAT mulai berputar?
+const int MIN_POWER_KIRI = 90;
+const int MIN_POWER_KANAN = 150; // Diberi 150 agar langsung kuat mendobrak beban baterai di kanan
+const int MIN_POWER_BELAKANG = 120;
+
+// 2. MAX_POWER (Top Speed) : Berapa batas atas kecepatan motor?
+const int MAX_POWER_KIRI = 190;  // Dibatasi ke 190 agar kecepatan tertingginya tidak mendahului kanan
+const int MAX_POWER_KANAN = 255; // Bebas mentok sampai 255
+const int MAX_POWER_BELAKANG = 255;
 
 // =========================
 // SOLENOID (SHOOTER)
@@ -60,13 +66,7 @@ const float MOTOR_COMP_BELAKANG = 1.00;
 // =========================
 unsigned long lastCommandTime = 0;
 const unsigned long SAFETY_TIMEOUT = 500;
-bool isStopped = true; // Menyimpan status stop
-
-// =========================
-// POWER BOOST SETTINGS
-// =========================
-int minPower = 120;     // Power minimal agar motor bisa start di karpet
-int maxPower = 255;     // Power maksimum
+bool isStopped = true;
 
 // =========================
 // WiFi CONNECTION
@@ -89,7 +89,7 @@ void setup_wifi() {
 // MOTOR CONTROL
 // =========================
 void setMotor(int pwmPin, int in1, int in2, int speedVal) {
-  speedVal = constrain(speedVal, -maxPower, maxPower);
+  speedVal = constrain(speedVal, -255, 255);
   
   if(speedVal > 0) {
     digitalWrite(in1, HIGH);
@@ -109,22 +109,32 @@ void setMotor(int pwmPin, int in1, int in2, int speedVal) {
 }
 
 // =========================
-// MOTOR COMMAND LANGSUNG
+// MOTOR COMMAND LANGSUNG (V6 ALGORITHM)
 // =========================
 void moveMotors(int motorKiri, int motorKanan, int motorBelakang) {
-  // Boost power (minPower) dipindah ke sini agar tidak membatalkan kompensasi
-  if (motorKiri > 0 && motorKiri < minPower) motorKiri = minPower;
-  if (motorKiri < 0 && motorKiri > -minPower) motorKiri = -minPower;
   
-  if (motorKanan > 0 && motorKanan < minPower) motorKanan = minPower;
-  if (motorKanan < 0 && motorKanan > -minPower) motorKanan = -minPower;
+  // Lambda function untuk menghitung Advanced Mapping
+  auto mapSpeed = [](int inputSpeed, int minPwr, int maxPwr) {
+    if (inputSpeed == 0) return 0;
+    int absSpeed = abs(inputSpeed);
+    
+    // Asumsikan inputSpeed dari controller antara 1 s/d 255
+    // Kita petakan ke rentang minPwr s/d maxPwr yang spesifik per roda
+    int mapped = map(absSpeed, 1, 255, minPwr, maxPwr);
+    
+    // Kembalikan arahnya (maju/mundur)
+    return (inputSpeed > 0) ? mapped : -mapped;
+  };
   
-  if (motorBelakang > 0 && motorBelakang < minPower) motorBelakang = minPower;
-  if (motorBelakang < 0 && motorBelakang > -minPower) motorBelakang = -minPower;
+  // Terapkan mapping ke masing-masing roda
+  int pwmKiri = mapSpeed(motorKiri, MIN_POWER_KIRI, MAX_POWER_KIRI);
+  int pwmKanan = mapSpeed(motorKanan, MIN_POWER_KANAN, MAX_POWER_KANAN);
+  int pwmBelakang = mapSpeed(motorBelakang, MIN_POWER_BELAKANG, MAX_POWER_BELAKANG);
 
-  setMotor(ENA1, IN1, IN2, (int)(motorKiri * MOTOR_COMP_KIRI));
-  setMotor(ENB1, IN3, IN4, (int)(motorKanan * MOTOR_COMP_KANAN));
-  setMotor(ENA2, IN5, IN6, (int)(motorBelakang * MOTOR_COMP_BELAKANG));
+  setMotor(ENA1, IN1, IN2, pwmKiri);
+  setMotor(ENB1, IN3, IN4, pwmKanan);
+  setMotor(ENA2, IN5, IN6, pwmBelakang);
+  
   isStopped = false; // Tandai bahwa robot sedang bergerak
 }
 
@@ -132,34 +142,32 @@ void moveMotors(int motorKiri, int motorKanan, int motorBelakang) {
 // GERAKAN DASAR
 // =========================
 void maju(int speed) {
-  int s = constrain(speed, 0, maxPower);
-  moveMotors(s, s, 0); // Motor belakang (0) agar tidak mendorong ke samping
+  int s = constrain(speed, 0, 255);
+  moveMotors(s, s, 0); 
 }
 
 void mundur(int speed) {
-  int s = constrain(speed, 0, maxPower);
+  int s = constrain(speed, 0, 255);
   moveMotors(-s, -s, 0);
 }
 
 void geserKiri(int speed) {
-  int s = constrain(speed, 0, maxPower);
-  // Gerak kepiting ke Kiri tanpa rotasi
+  int s = constrain(speed, 0, 255);
   moveMotors(-s/2, s/2, s);
 }
 
 void geserKanan(int speed) {
-  int s = constrain(speed, 0, maxPower);
-  // Gerak kepiting ke Kanan tanpa rotasi
+  int s = constrain(speed, 0, 255);
   moveMotors(s/2, -s/2, -s);
 }
 
 void rotasiKiri(int speed) {
-  int s = constrain(speed, 0, maxPower);
+  int s = constrain(speed, 0, 255);
   moveMotors(-s, s, -s);
 }
 
 void rotasiKanan(int speed) {
-  int s = constrain(speed, 0, maxPower);
+  int s = constrain(speed, 0, 255);
   moveMotors(s, -s, s);
 }
 
@@ -207,7 +215,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   
   if(String(topic) == "rafly/krsbi_iot/cmd") {
-    StaticJsonDocument<256> doc; // Memperbesar kapasitas memory parsing JSON jaga-jaga
+    StaticJsonDocument<256> doc; 
     DeserializationError err = deserializeJson(doc, data);
     
     if(!err) {
@@ -318,7 +326,7 @@ void loop() {
   }
   client.loop();
   
-  // Safety stop: Otomatis berhenti jika tidak ada perintah > 500ms
+  // Safety stop
   if(!isStopped && (millis() - lastCommandTime > SAFETY_TIMEOUT)) {
     stopRobot();
   }
