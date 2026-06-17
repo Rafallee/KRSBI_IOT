@@ -35,7 +35,7 @@ PubSubClient client(espClient);
 // =========================
 // MOTOR CALIBRATION
 // =========================
-const float MOTOR_COMP_KIRI = 1.00; 
+const float MOTOR_COMP_KIRI = 0.90; 
 const float MOTOR_COMP_KANAN = 1.00;
 const float MOTOR_COMP_BELAKANG = 1.00;
 
@@ -131,22 +131,24 @@ void moveMotors(int motorKiri, int motorKanan, int motorBelakang) {
 // =========================
 void maju(int speed) {
   int s = constrain(speed, 0, maxPower);
-  moveMotors(s, s, s);
+  moveMotors(s, s, 0); // Motor belakang (0) agar tidak mendorong ke samping
 }
 
 void mundur(int speed) {
   int s = constrain(speed, 0, maxPower);
-  moveMotors(-s, -s, -s);
+  moveMotors(-s, -s, 0);
 }
 
 void geserKiri(int speed) {
   int s = constrain(speed, 0, maxPower);
-  moveMotors(-s, s, 0);
+  // Gerak kepiting ke Kiri tanpa rotasi
+  moveMotors(-s/2, s/2, s);
 }
 
 void geserKanan(int speed) {
   int s = constrain(speed, 0, maxPower);
-  moveMotors(s, -s, 0);
+  // Gerak kepiting ke Kanan tanpa rotasi
+  moveMotors(s/2, -s/2, -s);
 }
 
 void rotasiKiri(int speed) {
