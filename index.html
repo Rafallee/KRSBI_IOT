@@ -1,0 +1,120 @@
+  <!doctype html>
+  <html lang="id">
+    <head>
+      <meta charset="UTF-8" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      />
+      <title>ROBO-3 Controller - Mecanum 3 Roda</title>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;800&display=swap"
+        rel="stylesheet"
+      />
+      <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+      <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+      <div class="scanline"></div>
+      <div class="grid-bg"></div>
+
+      <div class="app">
+        <header>
+          <div class="brand">
+            <div class="logo">R3</div>
+            <div class="brand-text">
+              <span class="brand-title">ROBO-3</span>
+              <span class="brand-sub">MECANUM CONTROLLER</span>
+            </div>
+          </div>
+          <div class="status-wrap">
+            <div class="status-dot" id="statusDot"></div>
+            <span class="status-label" id="statusText">OFFLINE</span>
+          </div>
+        </header>
+
+        <main>
+          <div class="dpad-wrap">
+            <div class="dpad">
+              <div class="dpad-row">
+                <button
+                  class="dpad-btn"
+                  data-command="rotasi-kiri"
+                  data-speed="200"
+                >
+                  ↺
+                </button>
+                <button class="dpad-btn" data-command="maju" data-speed="255">
+                  ↑
+                </button>
+                <button
+                  class="dpad-btn"
+                  data-command="rotasi-kanan"
+                  data-speed="200"
+                >
+                  ↻
+                </button>
+              </div>
+
+              <div class="dpad-row">
+                <button class="dpad-btn" data-command="kiri" data-speed="200">
+                  ←
+                </button>
+                <button class="dpad-btn stop" data-command="stop">■</button>
+                <button class="dpad-btn" data-command="kanan" data-speed="200">
+                  →
+                </button>
+              </div>
+
+              <div class="dpad-row">
+                <button class="dpad-btn" data-command="mundur" data-speed="255">
+                  ↓
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="motor-info">
+            <div class="info-card">
+              <div class="motor-label">MOTOR KIRI (Depan)</div>
+              <div class="motor-value" id="motorKiriVal">0</div>
+            </div>
+            <div class="info-card">
+              <div class="motor-label">MOTOR KANAN (Depan)</div>
+              <div class="motor-value" id="motorKananVal">0</div>
+            </div>
+            <div class="info-card">
+              <div class="motor-label">MOTOR BELAKANG</div>
+              <div class="motor-value" id="motorBelakangVal">0</div>
+            </div>
+          </div>
+
+          <div class="action-panel">
+            <button class="action-btn shoot" id="btnShoot" data-cmd="SHOOT">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"
+                />
+              </svg>
+              <span>SHOOT</span>
+            </button>
+          </div>
+
+          <div class="log-wrap">
+            <div class="log-label">COMMAND LOG</div>
+            <div class="log" id="cmdLog">
+              <span class="log-idle">-- AWAITING CONNECTION --</span>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <script src="script.js"></script>
+    </body>
+  </html>
