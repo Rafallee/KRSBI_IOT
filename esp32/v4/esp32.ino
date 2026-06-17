@@ -212,6 +212,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
       String action = doc["action"];
       int speed = doc["speed"] | 150;
       
+      Serial.printf("=> Terima JSON: %s (%d)\n", action.c_str(), speed);
+      
       lastCommandTime = millis();
       
       if(action == "maju") {
