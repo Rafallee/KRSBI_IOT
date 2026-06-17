@@ -46,7 +46,8 @@ Proyek ini dirancang khusus untuk memenuhi tugas pada mata kuliah **Pemrograman 
 * 📁 **`esp32/v1/`** : Versi purwarupa (awal) dari sistem ESP32.
 * 📁 **`esp32/v2/`** : Pengembangan versi dengan penambahan *debug print* PWM di Serial Monitor untuk kebutuhan fase pengujian (*testing*).
 * 📁 **`esp32/v3/`** : Versi kode pembersihan (*clean code*) tanpa spam serial monitor dengan perbaikan *bug* safety auto-stop.
-* 📁 **`esp32/v4/`** 🌟 : **Versi Final**. Terdapat pembaharuan logika kinematik yang tepat untuk pergerakan *Omni-wheel* 3 roda (menyelesaikan masalah robot miring saat maju dan memutar saat menggeser) serta penyesuaian kalibrasi kekuatan motor.
+* 📁 **`esp32/v4/`** : Terdapat pembaharuan logika kinematik yang tepat untuk pergerakan *Omni-wheel* 3 roda dan kalibrasi motor 0.90.
+* 📁 **`esp32/v5/`** 🌟 : **Versi Final Paling Stabil**. Menyempurnakan kalibrasi motor kiri menjadi 0.75 dengan perbaikan *logic override minPower* agar kompensasi tetap berlaku saat berjalan pelan.
 
 ---
 
@@ -56,7 +57,7 @@ Proyek ini dirancang khusus untuk memenuhi tugas pada mata kuliah **Pemrograman 
 2. Tambahkan ekstensi (*Library*) berikut melalui *Library Manager* di aplikasi Arduino IDE:
    - `PubSubClient` *(oleh Nick O'Leary)*
    - `ArduinoJson` *(oleh Benoit Blanchon)*
-3. Buka file `esp32/v4/esp32.ino`.
+3. Buka file `esp32/v5/esp32.ino`.
 4. Sesuaikan konfigurasi jaringan (*Network*) Anda pada blok kode berikut:
    ```cpp
    const char* ssid = "NAMA_WIFI_ANDA";
